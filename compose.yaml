@@ -1,0 +1,19 @@
+services:
+  postgres:
+    container_name: postgres_rsinet
+    image: docker.io/postgres:16.13-alpine3.23
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file: .env
+    networks:
+      - rsinet
+
+volumes:
+  postgres_data:
+
+networks:
+  rsinet:
+    driver: bridge
