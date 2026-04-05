@@ -11,7 +11,7 @@ class Account(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("User.id"))
     role_id: Mapped[int] = mapped_column(ForeignKey("Role.id"))
     email: Mapped[str] = mapped_column(Text, nullable=False, unique=True)
-    username: Mapped[str] = mapped_column(String(50), nullable=False, unique=True)
+    username: Mapped[str] = mapped_column(String(16), nullable=False, unique=True)
     password: Mapped[str] = mapped_column(Text, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), onupdate=func.now(), nullable=True)
