@@ -18,5 +18,5 @@ class Registration(Base):
         nullable=False
     )
 
-    user = relationship("User", back_populates="registrations")
-    event = relationship("Event", back_populates="registrations")
+    user: Mapped["User"] = relationship(back_populates="registrations")
+    event: Mapped["Event"] = relationship(back_populates="registrations")
