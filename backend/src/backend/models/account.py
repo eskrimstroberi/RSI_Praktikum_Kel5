@@ -16,6 +16,6 @@ class Account(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), onupdate=func.now(), nullable=True)
 
-    user: Mapped["User"] = relationship(back_populates="Accounts")
-    role: Mapped["Role"] = relationship(back_populates="Accounts")
-    logs: Mapped[list["Log"]] = relationship(back_populates="Logs")
+    user: Mapped["User"] = relationship("User", back_populates="accounts")
+    role: Mapped["Role"] = relationship("Role", back_populates="accounts")
+    logs: Mapped[list["Log"]] = relationship("Log", back_populates="account")
