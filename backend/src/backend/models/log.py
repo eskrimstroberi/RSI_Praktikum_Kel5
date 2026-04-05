@@ -16,4 +16,4 @@ class Log(Base):
     entity: Mapped[str] = mapped_column(String(50), nullable=False)
     entity_id: Mapped[int | None] = mapped_column(nullable=True)
     
-    account: Mapped["Account"] = relationship(back_populates="Logs")
+    account: Mapped["Account"] = relationship("Account", back_populates="logs")
