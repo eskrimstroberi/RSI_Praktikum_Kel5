@@ -1,3 +1,4 @@
+from datetime import datetime
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import String, DateTime
 from sqlalchemy.sql import func
@@ -13,16 +14,18 @@ class User(Base):
     last_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
     whatsapp: Mapped[str | None] = mapped_column(String(30), nullable=True)
 
-    created_at: Mapped[DateTime] = mapped_column(
+    created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now()
     )
 
-    updated_at: Mapped[DateTime] = mapped_column(
+    updated_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
         onupdate=func.now()
     )
 
-    accounts = relationship("Account", back_populates="user")
-    registrations = relationship("Registration", back_populates="user")
+    accounts: Mapped[list["Account"]] = relationship(back_populates="user")
+    registrations: Mapped[list["Registration"]] = relationship(
+        back_populates="user"
+    )
