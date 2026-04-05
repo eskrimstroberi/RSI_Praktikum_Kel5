@@ -15,6 +15,9 @@ backend/src/backend/
 │       └── endpoints/       # Individual resource routes
 │           ├── __init__.py
 │           └── items.py
+├── db/                      # Database metadata, connection, and session.
+│   ├── __init__.py
+│   └── base.py
 ├── core/                    # Global config (pydantic settings, security)
 │   ├── __init__.py
 │   └── config.py
