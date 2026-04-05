@@ -1,12 +1,11 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
-from typing import Optional
 
 
 class UserBase(BaseModel):
-    first_name: Optional[str] = Field(None, max_length=255)
-    last_name: Optional[str] = Field(None, max_length=255)
-    whatsapp: Optional[str] = Field(None, max_length=30)
+    first_name: str | None = Field(None, max_length=255)
+    last_name: str | None = Field(None, max_length=255)
+    whatsapp: str | None = Field(None, max_length=30)
 
 
 class UserCreate(UserBase):
@@ -24,3 +23,4 @@ class UserResponse(UserBase):
 
     class Config:
         from_attributes = True
+
