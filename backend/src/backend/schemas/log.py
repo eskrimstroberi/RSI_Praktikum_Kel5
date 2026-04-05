@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict
-from typing import Optional
 from datetime import datetime
+from typing import Optional
 
 class LogBase(BaseModel):
     account_id: int
