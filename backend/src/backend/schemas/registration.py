@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from typing import Optional
 from .user import UserResponse
 from .event import EventResponse
 
@@ -25,5 +24,6 @@ class RegistrationResponse(RegistrationBase):
 
 
 class RegistrationDetail(RegistrationResponse):
-    user: Optional[UserResponse] = None
-    event: Optional[EventResponse] = None
+    user: UserResponse | None = None
+    event: EventResponse | None = None
+

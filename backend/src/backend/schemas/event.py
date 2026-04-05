@@ -1,14 +1,13 @@
 from pydantic import BaseModel
 from datetime import datetime
-from typing import Optional
 
 
 class EventBase(BaseModel):
     name: str
-    description: Optional[str] = None
-    quota: Optional[int] = None
-    started_at: Optional[datetime] = None
-    ended_at: Optional[datetime] = None
+    description: str | None = None
+    quota: int | None = None
+    started_at: datetime | None = None
+    ended_at: datetime | None = None
 
 
 class EventCreate(EventBase):
@@ -26,3 +25,4 @@ class EventResponse(EventBase):
 
     class Config:
         from_attributes = True
+
