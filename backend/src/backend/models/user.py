@@ -1,19 +1,28 @@
-from sqlalchemy import Column, Integer, String, DateTime
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import String, DateTime
+from sqlalchemy.sql import func
 from backend.db.base_model import Base
 
 
 class User(Base):
     __tablename__ = "User"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
 
-    first_name = Column(String(255))
-    last_name = Column(String(255))
-    whatsapp = Column(String(30))
+    first_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    last_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    whatsapp: Mapped[str | None] = mapped_column(String(30), nullable=True)
 
-    created_at = Column(DateTime)
-    updated_at = Column(DateTime)
+    created_at: Mapped[DateTime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now()
+    )
+
+    updated_at: Mapped[DateTime] = mapped_column(
+        DateTime(timezone=True),
+        server_default=func.now(),
+        onupdate=func.now()
+    )
 
     accounts = relationship("Account", back_populates="user")
     registrations = relationship("Registration", back_populates="user")
