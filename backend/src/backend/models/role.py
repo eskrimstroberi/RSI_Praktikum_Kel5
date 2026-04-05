@@ -4,9 +4,9 @@ from backend.db.base_model import Base
 
 
 class Role(Base):
-    __tablename__ = "role"
+    __tablename__ = "Role"
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
     name: Mapped[str] = mapped_column(String(255))
 
-    accounts: Mapped[list["Account"]] = relationship(back_populates="role")
+    accounts: Mapped[list["Account"]] = relationship(back_populates="Role")
