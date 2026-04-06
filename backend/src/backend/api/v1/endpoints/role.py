@@ -20,8 +20,7 @@ def get_role(role_id: int, db: Session = Depends(get_db)):
     role = service.get_role(db, role_id)
     if not role:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Role not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Role not found"
         )
     return role
 
@@ -36,7 +35,7 @@ def delete_role(role_id: int, db: Session = Depends(get_db)):
     deleted = service.delete_role(db, role_id)
     if not deleted:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Role not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Role not found"
         )
     return None
+

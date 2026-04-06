@@ -20,8 +20,7 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
     user = service.get_user(db, user_id)
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
         )
     return user
 
@@ -32,16 +31,11 @@ def create_user(data: UserCreate, db: Session = Depends(get_db)):
 
 
 @router.put("/{user_id}", response_model=UserResponse, status_code=status.HTTP_200_OK)
-def update_user(
-    user_id: int,
-    data: UserUpdate,
-    db: Session = Depends(get_db)
-):
+def update_user(user_id: int, data: UserUpdate, db: Session = Depends(get_db)):
     user = service.update_user(db, user_id, data)
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
         )
     return user
 
@@ -51,7 +45,6 @@ def delete_user(user_id: int, db: Session = Depends(get_db)):
     deleted = service.delete_user(db, user_id)
     if not deleted:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="User not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
         )
     return None
