@@ -1,31 +1,39 @@
 from sqlmodel import Session
-import backend.repositories.registration as registration_repo
-import backend.schemas.registration as registration_schema
+
 from backend.models.registration import Registration as RegistrationModel
+from backend.schemas.registration import RegistrationCreate, RegistrationUpdate
 
 
-def get_all(db: Session):
-    return registration_repo.get_all(db)
+class RegistrationService:
+    def get_registrations(self, db: Session):
+        return db.query(RegistrationModel).all()
 
+    def get_registration(self, db: Session, registration_id: int):
+        return db.get(RegistrationModel, registration_id)
 
-def get(
-    db: Session,
-    registration_id: int,
-):
-    return registration_repo.get_by_id(db, registration_id)
+    def create_registration(self, db: Session, data: RegistrationCreate):
+        registration = RegistrationModel(**data.model_dump())
+        db.add(registration)
+        db.commit()
+        db.refresh(registration)
+        return registration
 
+    def update_registration(self, db: Session, registration_id: int, data: RegistrationUpdate):
+        registration = db.get(RegistrationModel, registration_id)
+        if not registration:
+            return None
 
-def create(db: Session, registration_data: registration_schema.RegistrationCreate):
-    registration_model = RegistrationModel(
-        user_id=registration_data.user_id, event_id=registration_data
-    )
-    return registration_repo.create(db, registration_model)
+        for key, value in data.model_dump().items():
+            setattr(registration, key, value)
 
+        db.commit()
+        return registration
 
-def delete(
-    db: Session,
-    registration_id: int,
-):
-    registration_model = registration_repo.get_by_id(db, registration_id)
-    return registration_repo.delete(db, registration_model)
+    def delete_registration(self, db: Session, registration_id: int):
+        registration = db.get(RegistrationModel, registration_id)
+        if not registration:
+            return False
 
+        db.delete(registration)
+        db.commit()
+        return True

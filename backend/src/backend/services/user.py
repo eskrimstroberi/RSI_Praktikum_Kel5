@@ -1,38 +1,39 @@
-from fastapi import Depends
 from sqlmodel import Session
-import backend.repositories.user as user_repo
-import backend.schemas.user as user_schema
+
 from backend.models.user import User as UserModel
+from backend.schemas.user import UserCreate, UserUpdate
 
 
-def get(db: Session):
-    return user_repo.get_all(db)
+class UserService:
+    def get_users(self, db: Session):
+        return db.query(UserModel).all()
 
+    def get_user(self, db: Session, user_id: int):
+        return db.get(UserModel, user_id)
 
-def get_all(db: Session, user_id: int):
-    return user_repo.get_by_id(db, user_id)
+    def create_user(self, db: Session, data: UserCreate):
+        user = UserModel(**data.model_dump())
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+        return user
 
+    def update_user(self, db: Session, user_id: int, data: UserUpdate):
+        user = db.get(UserModel, user_id)
+        if not user:
+            return None
 
-def create(db: Session, user_data: user_schema.UserCreate):
-    user = UserModel(
-        first_name=user_data.first_name,
-        last_name=user_data.last_name,
-        whatsapp=user_data.whatsapp,
-    )
-    return user_repo.create(db, user)
+        for key, value in data.model_dump().items():
+            setattr(user, key, value)
 
+        db.commit()
+        return user
 
-def update(db: Session, user_id: int, user_data: user_schema.UserUpdate):
-    user = UserModel(
-        first_name=user_data.first_name,
-        last_name=user_data.last_name,
-        whatsapp=user_data.whatsapp,
-    )
-    res = user_repo.update(db, user_id, user)
+    def delete_user(self, db: Session, user_id: int):
+        user = db.get(UserModel, user_id)
+        if not user:
+            return False
 
-
-def delete(db: Session, user_id: int):
-    user = user_repo.get_by_id(db, user_id)
-    res = user_repo.delete(db, user)
-    return res
-
+        db.delete(user)
+        db.commit()
+        return True
