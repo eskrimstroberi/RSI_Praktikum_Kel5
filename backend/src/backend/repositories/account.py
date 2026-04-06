@@ -1,18 +1,26 @@
 from sqlmodel import Session, select
-from src.backend.database.schema import Account
+from backend.models.account import Account as AccountModel
 
-def create_account(db: Session, account: Account):
+
+def create(db: Session, *, account: AccountModel):
     db.add(account)
     db.commit()
     db.refresh(account)
     return account
 
-def get_account_by_id(db: Session, account_id: int):
-    return db.get(Account, account_id)
 
-def get_all_accounts(db: Session):
-    return db.exec(select(Account)).all()
+def get_by_id(db: Session, *, account_id: int):
+    res = db.get_one(AccountModel, account_id)
+    return res
 
-def delete_account(db: Session, account: Account):
+
+def get_all(db: Session):
+    query = select(AccountModel)
+    res = db.exec(query).all()
+    db.commit()
+    return res
+
+
+def delete(db: Session, *, account: AccountModel):
     db.delete(account)
     db.commit()

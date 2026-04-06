@@ -1,27 +1,32 @@
 from sqlmodel import Session, select
-from src.backend.database.schema import Event
+from backend.models.event import Event as EventModel
 
 
-class EventRepository:
+def get_all(db: Session):
+    query = select(EventModel)
+    res = db.exec(query).all()
+    return res
 
-    def get_all(self, db: Session):
-        return db.exec(select(Event)).all()
 
-    def get_by_id(self, db: Session, event_id: int):
-        return db.get(Event, event_id)
+def get_by_id(db: Session, event_id: int):
+    res = db.get_one(EventModel, event_id)
+    return res
 
-    def create(self, db: Session, event: Event):
-        db.add(event)
-        db.commit()
-        db.refresh(event)
-        return event
 
-    def update(self, db: Session, event: Event):
-        db.add(event)
-        db.commit()
-        db.refresh(event)
-        return event
+def create(db: Session, event: EventModel):
+    db.add(event)
+    db.commit()
+    db.refresh(event)
+    return event
 
-    def delete(self, db: Session, event: Event):
-        db.delete(event)
-        db.commit()
+
+def update(db: Session, event: EventModel):
+    db.add(event)
+    db.commit()
+    db.refresh(event)
+    return event
+
+
+def delete(db: Session, event: EventModel):
+    db.delete(event)
+    db.commit()

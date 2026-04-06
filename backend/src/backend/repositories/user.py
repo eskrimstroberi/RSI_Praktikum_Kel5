@@ -1,29 +1,32 @@
 from sqlmodel import Session, select
-from src.backend.database.schema import User
+from backend.schemas.user import UserBase
+from backend.models.user import User as UserModel
 
-# CREATE
-def create_user(db: Session, user: User):
+
+def create(db: Session, user: UserBase):
     db.add(user)
     db.commit()
     db.refresh(user)
     return user
 
+
 # GET ALL
-def get_all_users(db: Session):
-    return db.exec(select(User)).all()
+def get_all(db: Session):
+    query = select(UserBase)
+    res = db.exec(query).all()
+    return res
 
-# GET BY ID
-def get_user_by_id(db: Session, user_id: int):
-    return db.get(User, user_id)
 
-# UPDATE
-def update_user(db: Session, user_id: int, user_data):
-    user = db.get(User, user_id)
-    
+def get_by_id(db: Session, user_id: int):
+    return db.get(UserBase, user_id)
+
+
+def update(db: Session, user_id: int, user_data: UserModel):
+    user = db.get_one(UserModel, user_id)
+
     if not user:
         return None
 
-     # update field sesuai UserUpdate
     if user_data.first_name is not None:
         user.first_name = user_data.first_name
     if user_data.last_name is not None:
@@ -36,7 +39,7 @@ def update_user(db: Session, user_id: int, user_data):
     db.refresh(user)
     return user
 
-# DELETE
-def delete_user(db: Session, user: User):
+
+def delete(db: Session, user: UserModel):
     db.delete(user)
     db.commit()
