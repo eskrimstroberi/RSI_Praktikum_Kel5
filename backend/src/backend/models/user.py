@@ -26,4 +26,3 @@ class User(Base):
     registrations: Mapped[list["Registration"]] = relationship(
         "Registration", back_populates="user"
     )
-
