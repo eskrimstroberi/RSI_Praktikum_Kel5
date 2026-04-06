@@ -1,28 +1,30 @@
-from fastapi import Depends
 from sqlmodel import Session
-from src.services.event_service import EventService
-from src.database.connection import get_session
-from src.dto.event import EventCreate
+import backend.repositories.event as event_repo
+import backend.schemas.event as event_schema
+from backend.models.event import Event as EventModel
 
 
-service = EventService()
+def get_all(db: Session):
+    return event_repo.get_all(db)
 
 
-def get_events(db: Session = Depends(get_session)):
-    return service.get_events(db)
+def get(db: Session, event_id: int):
+    return event_repo.get_by_id(db, event_id)
 
 
-def get_event(event_id: int, db: Session = Depends(get_session)):
-    return service.get_event(db, event_id)
+def create(db: Session, event_data: event_schema.EventCreate):
+    event_model = EventModel(name=event_data.name, description=event_data.description)
+    return event_repo.create(db, event_model)
 
 
-def create_event(data: EventCreate, db: Session = Depends(get_session)):
-    return service.create_event(db, data)
+def update(db: Session, event_id: int, event_data: event_schema.EventUpdate):
+    event_model = EventModel(
+        id=event_id, name=event_data.name, description=event_data.description
+    )
+    return event_repo.update(db, event_model)
 
 
-def update_event(event_id: int, data: EventCreate, db: Session = Depends(get_session)):
-    return service.update_event(db, event_id, data)
+def delete(db: Session, event_id: int):
+    event = event_repo.get_by_id(db, event_id)
+    return event_repo.delete(db, event)
 
-
-def delete_event(event_id: int, db: Session = Depends(get_session)):
-    return service.delete_event(db, event_id)

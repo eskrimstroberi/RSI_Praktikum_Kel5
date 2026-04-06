@@ -1,27 +1,31 @@
-from fastapi import Depends
 from sqlmodel import Session
-
-from src.database.connection import get_session
-from src.dto.registration import RegistrationCreate
-from src.services.registration_service import (
-    create_registration_service,
-    get_all_registrations_service,
-    get_registration_by_id_service,
-    delete_registration_service,
-)
+import backend.repositories.registration as registration_repo
+import backend.schemas.registration as registration_schema
+from backend.models.registration import Registration as RegistrationModel
 
 
-def get_registrations(db: Session = Depends(get_session)):
-    return get_all_registrations_service(db)
+def get_all(db: Session):
+    return registration_repo.get_all(db)
 
 
-def get_registration(registration_id: int, db: Session = Depends(get_session)):
-    return get_registration_by_id_service(db, registration_id)
+def get(
+    db: Session,
+    registration_id: int,
+):
+    return registration_repo.get_by_id(db, registration_id)
 
 
-def create_registration(data: RegistrationCreate, db: Session = Depends(get_session)):
-    return create_registration_service(db, data)
+def create(db: Session, registration_data: registration_schema.RegistrationCreate):
+    registration_model = RegistrationModel(
+        user_id=registration_data.user_id, event_id=registration_data
+    )
+    return registration_repo.create(db, registration_model)
 
 
-def delete_registration(registration_id: int, db: Session = Depends(get_session)):
-    return delete_registration_service(db, registration_id)
+def delete(
+    db: Session,
+    registration_id: int,
+):
+    registration_model = registration_repo.get_by_id(db, registration_id)
+    return registration_repo.delete(db, registration_model)
+

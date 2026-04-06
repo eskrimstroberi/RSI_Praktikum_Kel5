@@ -1,42 +1,46 @@
 from datetime import datetime
 from fastapi import HTTPException
 from sqlmodel import Session
-from src.backend.database.schema.schema import Account, User, Role
-from src.backend.repositories.account_repository import (
-    create_account,
-    get_account_by_id,
-    get_all_accounts,
-    delete_account
-)
+import backend.schemas.account as account_schema
+import backend.repositories.account as account_repo
+from backend.models.user import User as UserModel
+from backend.models.account import Account as AccountModel
+from backend.models.role import Role as RoleModel
 
-def create_account_service(db: Session, account_data):
-    user = db.get(User, account_data.user_id)
+
+def create_account_service(db: Session, account_data: account_schema.AccountCreate):
+    user = db.get(UserModel, account_data.user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 
-    role = db.get(Role, account_data.role_id)
+    role = db.get(RoleModel, account_data.role_id)
     if not role:
         raise HTTPException(status_code=404, detail="Role not found")
 
     now = datetime.now()
-    account = Account(
-        **account_data.dict(),
+    account = AccountModel(
+        **account_data.model_dump(),
         created_at=now,
         updated_at=now,
     )
-    return create_account(db, account)
+    res = account_repo.create(db, account)
+    return res
 
-def get_all_accounts_service(db: Session):
-    return get_all_accounts(db)
 
-def get_account_by_id_service(db: Session, account_id: int):
-    account = get_account_by_id(db, account_id)
+def get_all(db: Session):
+    return account_repo.get_all(db)
+
+
+def get_by_id(db: Session, account_id: int):
+    account = account_repo.get_by_id(db, account_id)
     if not account:
         raise HTTPException(status_code=404, detail="Account not found")
     return account
 
-def delete_account_service(db: Session, account_id: int):
-    account = get_account_by_id(db, account_id)
+
+def delete(db: Session, account_id: int):
+    account = account_repo.get_by_id(db, account_id)
     if not account:
         raise HTTPException(status_code=404, detail="Account not found")
-    delete_account(db, account)
+    account_repo.delete(db, account)
+
