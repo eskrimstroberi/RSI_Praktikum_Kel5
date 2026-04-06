@@ -3,8 +3,6 @@ from backend.models.user import User
 from backend.models.registration import Registration
 from backend.models.event import Event
 from backend.models.role import Role
-from backend.models.user import User
-from backend.models.event import Event
 from backend.models.account import Account
 from backend.models.log import Log
 from backend.models.registration import Registration
