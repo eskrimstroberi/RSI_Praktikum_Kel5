@@ -1,18 +1,25 @@
 from sqlmodel import Session, select
-from src.backend.database.schema import Registration
+from backend.models.registration import Registration as RegistrationModel
 
-def create_registration(db: Session, registration: Registration):
+
+def create(db: Session, registration: RegistrationModel):
     db.add(registration)
     db.commit()
     db.refresh(registration)
     return registration
 
-def get_all_registrations(db: Session):
-    return db.exec(select(Registration)).all()
 
-def get_registration_by_id(db: Session, registration_id: int):
-    return db.get(Registration, registration_id)
+def get_all(db: Session):
+    query = select(RegistrationModel)
+    res = db.exec(query).all()
+    return res
 
-def delete_registration(db: Session, registration: Registration):
+
+def get_by_id(db: Session, registration_id: int):
+    res = db.get_one(RegistrationModel, registration_id)
+    return res
+
+
+def delete(db: Session, registration: RegistrationModel):
     db.delete(registration)
     db.commit()
