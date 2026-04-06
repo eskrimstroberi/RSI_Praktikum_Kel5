@@ -15,17 +15,15 @@ class User(Base):
     whatsapp: Mapped[str | None] = mapped_column(String(30), nullable=True)
 
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        server_default=func.now()
+        DateTime(timezone=True), server_default=func.now()
     )
 
     updated_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        onupdate=func.now()
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
 
-    accounts: Mapped[list["Account"]] = relationship(back_populates="user")
+    accounts: Mapped[list["Account"]] = relationship("Account", back_populates="user")
     registrations: Mapped[list["Registration"]] = relationship(
-        back_populates="user"
+        "Registration", back_populates="user"
     )
+

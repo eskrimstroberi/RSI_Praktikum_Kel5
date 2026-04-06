@@ -8,15 +8,10 @@ class Registration(Base):
 
     id: Mapped[int] = mapped_column(primary_key=True, index=True)
 
-    user_id: Mapped[int] = mapped_column(
-        ForeignKey("User.id"),
-        nullable=False
-    )
+    user_id: Mapped[int] = mapped_column(ForeignKey("User.id"), nullable=False)
 
-    event_id: Mapped[int] = mapped_column(
-        ForeignKey("Event.id"),
-        nullable=False
-    )
+    event_id: Mapped[int] = mapped_column(ForeignKey("Event.id"), nullable=False)
 
-    user: Mapped["User"] = relationship(back_populates="registrations")
-    event: Mapped["Event"] = relationship(back_populates="registrations")
+    user: Mapped["User"] = relationship("User", back_populates="registrations")
+    event: Mapped["Event"] = relationship("Event", back_populates="registrations")
+
