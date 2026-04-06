@@ -27,20 +27,20 @@ def create_account_service(db: Session, account_data: account_schema.AccountCrea
     return res
 
 
-def get_all(db: Session):
+def get_all_accounts_service(db: Session):
     return account_repo.get_all(db)
 
 
-def get_by_id(db: Session, account_id: int):
+def get_account_by_id_service(db: Session, account_id: int):
     account = account_repo.get_by_id(db, account_id)
     if not account:
         raise HTTPException(status_code=404, detail="Account not found")
     return account
 
 
-def delete(db: Session, account_id: int):
+def delete_account_service(db: Session, account_id: int):
     account = account_repo.get_by_id(db, account_id)
     if not account:
         raise HTTPException(status_code=404, detail="Account not found")
     account_repo.delete(db, account)
-
+    return {"message": "Account deleted successfully"}
