@@ -18,7 +18,9 @@ class RegistrationService:
         db.refresh(registration)
         return registration
 
-    def update_registration(self, db: Session, registration_id: int, data: RegistrationUpdate):
+    def update_registration(
+        self, db: Session, registration_id: int, data: RegistrationUpdate
+    ):
         registration = db.get(RegistrationModel, registration_id)
         if not registration:
             return None
@@ -37,3 +39,4 @@ class RegistrationService:
         db.delete(registration)
         db.commit()
         return True
+

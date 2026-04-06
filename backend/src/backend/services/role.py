@@ -1,4 +1,4 @@
-from sqlmodel import Session
+from sqlmodel import Session, select
 
 from backend.models.role import Role as RoleModel
 from backend.schemas.role import RoleCreate
@@ -6,7 +6,7 @@ from backend.schemas.role import RoleCreate
 
 class RoleService:
     def get_roles(self, db: Session):
-        return db.query(RoleModel).all()
+        return db.exec(select(RoleModel)).all()
 
     def get_role(self, db: Session, role_id: int):
         return db.get(RoleModel, role_id)
@@ -26,3 +26,4 @@ class RoleService:
         db.delete(role)
         db.commit()
         return True
+

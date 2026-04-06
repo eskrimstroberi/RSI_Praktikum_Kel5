@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+from sqlmodel import create_engine, Session
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
 from backend.core.config import settings
@@ -10,7 +10,8 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 def get_db():
     db = SessionLocal()
     try:
-        yield db
+        with Session(engine) as session:
+            yield session
     except SQLAlchemyError as e:
         db.rollback()
         raise e

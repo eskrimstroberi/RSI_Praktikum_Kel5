@@ -24,6 +24,6 @@ class Account(Base):
         nullable=True,
     )
 
-    user: Mapped["User"] = relationship("User", back_populates="account")
-    role: Mapped["Role"] = relationship("Role", back_populates="account")
+    user: Mapped["User"] = relationship("User", back_populates="accounts")
+    role: Mapped["Role"] = relationship("Role", back_populates="accounts")
     logs: Mapped[list["Log"]] = relationship("Log", back_populates="account")
