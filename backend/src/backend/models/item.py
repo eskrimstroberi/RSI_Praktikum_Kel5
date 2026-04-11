@@ -1,11 +1,10 @@
-from sqlalchemy.orm import Mapped, mapped_column
-from sqlalchemy import String, Float
-from backend.db.base_model import Base
+from sqlmodel import SQLModel, Field
 
-class Item(Base):
+
+class Item(SQLModel, table=True):
     __tablename__ = "Item"
 
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    name: Mapped[str] = mapped_column(String(100), nullable=False)
-    price: Mapped[float] = mapped_column(Float, default=0.0)
-    description: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    id: int = Field(primary_key=True, index=True)
+    name: str = Field(max_length=100, nullable=False)
+    price: float = Field(default=0.0)
+    description: str | None = Field(max_length=255, nullable=True)

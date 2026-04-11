@@ -1,16 +1,14 @@
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey
-from backend.db.base_model import Base
+from sqlmodel import Field, SQLModel, Relationship
 
 
-class Registration(Base):
-    __tablename__ = "Registration"
+class Registration(SQLModel, table=True):
+    __tablename__: str = "Registration"
 
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    id: int = Field(primary_key=True, index=True)
 
-    user_id: Mapped[int] = mapped_column(ForeignKey("User.id"), nullable=False)
+    user_id: int = Field(foreign_key="User.id", nullable=False)
 
-    event_id: Mapped[int] = mapped_column(ForeignKey("Event.id"), nullable=False)
+    event_id: int = Field(foreign_key="Event.id", nullable=False)
 
-    user: Mapped["User"] = relationship("User", back_populates="registrations")
-    event: Mapped["Event"] = relationship("Event", back_populates="registrations")
+    user: "User" = Relationship(back_populates="registrations")
+    event: "Event" = Relationship(back_populates="registrations")

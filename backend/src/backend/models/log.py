@@ -1,23 +1,21 @@
 from datetime import datetime
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import Text, ForeignKey, String, DateTime
+from sqlalchemy import Text, DateTime
 from sqlalchemy.sql import func
-from backend.db.base_model import Base
+from sqlmodel import Column, SQLModel, Relationship, Field
 
 
-class Log(Base):
+class Log(SQLModel, table=True):
     __tablename__ = "Log"
 
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    account_id: Mapped[int] = mapped_column(ForeignKey("Account.id"))
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
+    id: int = Field(primary_key=True, index=True)
+    account_id: int = Field(foreign_key="Account.id")
+    created_at: datetime = Field(
+        sa_column=Column(DateTime(timezone=True), server_default=func.now())
     )
-    action: Mapped[str] = mapped_column(String(75), nullable=False)
-    ip_address: Mapped[str | None] = mapped_column(Text, nullable=False)
-    user_agent: Mapped[str | None] = mapped_column(Text, nullable=False)
-    entity: Mapped[str] = mapped_column(String(50), nullable=False)
-    entity_id: Mapped[int | None] = mapped_column(nullable=True)
+    action: str = Field(max_length=75, nullable=False)
+    ip_address: str | None = Field(Text, nullable=False)
+    user_agent: str | None = Field(Text, nullable=False)
+    entity: str = Field(max_length=50, nullable=False)
+    entity_id: int | None = Field(nullable=True)
 
-    account: Mapped["Account"] = relationship("Account", back_populates="logs")
-
+    account: "Account" = Relationship(back_populates="logs")
