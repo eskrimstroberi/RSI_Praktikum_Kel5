@@ -1,5 +1,5 @@
 from sqlmodel import Session, select
-from backend.models.role import Role as RoleModel
+from app.models.role import Role as RoleModel
 
 
 def create(db: Session, role: RoleModel):

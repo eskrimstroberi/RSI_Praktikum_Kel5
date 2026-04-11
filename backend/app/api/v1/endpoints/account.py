@@ -1,9 +1,9 @@
 from fastapi import Depends, APIRouter
 from sqlmodel import Session
 
-from backend.db.session import get_db
-from backend.schemas.account import AccountCreate, AccountResponse
-from backend.services.account import (
+from app.db.session import get_db
+from app.schemas.account import AccountCreate, AccountResponse
+from app.services.account import (
     create_account_service,
     get_all_accounts_service,
     get_account_by_id_service,

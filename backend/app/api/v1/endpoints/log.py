@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session
 
-from backend.db.session import get_db
-from backend.schemas.log import LogCreate, LogRead, LogUpdate, LogPatch
-from backend.services.log import LogService
+from app.db.session import get_db
+from app.schemas.log import LogCreate, LogRead, LogUpdate, LogPatch
+from app.services.log import LogService
 
 router = APIRouter()
 

@@ -1,8 +1,8 @@
 from sqlmodel import Session
 from fastapi import HTTPException
 
-from backend.models.log import Log as LogModel
-from backend.schemas.log import LogCreate, LogUpdate, LogPatch
+from app.models.log import Log as LogModel
+from app.schemas.log import LogCreate, LogUpdate, LogPatch
 
 
 class LogService:

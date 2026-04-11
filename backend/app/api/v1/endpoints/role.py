@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session
 
-from backend.db.session import get_db
-from backend.schemas.role import RoleCreate, RoleResponse
-from backend.services.role import RoleService
+from app.db.session import get_db
+from app.schemas.role import RoleCreate, RoleResponse
+from app.services.role import RoleService
 
 router = APIRouter()
 

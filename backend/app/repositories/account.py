@@ -1,5 +1,5 @@
 from sqlmodel import Session, select
-from backend.models.account import Account as AccountModel
+from app.models.account import Account as AccountModel
 
 
 def create(db: Session, account: AccountModel):

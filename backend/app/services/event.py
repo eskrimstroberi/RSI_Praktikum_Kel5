@@ -1,7 +1,7 @@
 from sqlmodel import Session
 
-from backend.models.event import Event as EventModel
-from backend.schemas.event import EventCreate, EventUpdate
+from app.models.event import Event as EventModel
+from app.schemas.event import EventCreate, EventUpdate
 
 
 class EventService:
