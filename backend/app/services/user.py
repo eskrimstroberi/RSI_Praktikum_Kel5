@@ -1,39 +1,31 @@
+from fastapi import HTTPException
 from sqlmodel import Session
 
 from app.models.user import User as UserModel
 from app.schemas.user import UserCreate, UserUpdate
+from app.repositories.user import UserRepository
 
 
 class UserService:
-    def get_users(self, db: Session):
-        return db.query(UserModel).all()
+    def __init__(self, session: Session):
+        self.repo = UserRepository(session)
 
-    def get_user(self, db: Session, user_id: int):
-        return db.get(UserModel, user_id)
+    def get_all(self):
+        return self.repo.get_all()
 
-    def create_user(self, db: Session, data: UserCreate):
-        user = UserModel(**data.model_dump())
-        db.add(user)
-        db.commit()
-        db.refresh(user)
-        return user
+    def get_by_id(self, id: int):
+        return self.repo.get_by_id(id)
 
-    def update_user(self, db: Session, user_id: int, data: UserUpdate):
-        user = db.get(UserModel, user_id)
-        if not user:
-            return None
+    def create(self, data: UserCreate):
+        model_item = UserModel(**data.model_dump())
+        db_item = self.repo.create(model_item)
+        return db_item
 
-        for key, value in data.model_dump().items():
-            setattr(user, key, value)
+    def update_user(self, id: int, data: UserUpdate):
+        return self.repo.update(id, data.model_dump(exclude_unset=True))
 
-        db.commit()
-        return user
-
-    def delete_user(self, db: Session, user_id: int):
-        user = db.get(UserModel, user_id)
-        if not user:
-            return False
-
-        db.delete(user)
-        db.commit()
-        return True
+    def delete(self, id: int):
+        db_item = self.repo.get_by_id(id)
+        if not db_item:
+            raise HTTPException(404, "Item cannot be found.")
+        return self.repo.delete(db_item)

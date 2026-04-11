@@ -7,7 +7,7 @@ engine = create_engine(settings.DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
-def get_db():
+def get_session():
     db = SessionLocal()
     try:
         with Session(engine) as session:

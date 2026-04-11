@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session
 
-from app.db.session import get_db
+from app.db.session import get_session
 from app.schemas.registration import (
     RegistrationCreate,
     RegistrationUpdate,
@@ -11,59 +11,73 @@ from app.services.registration import RegistrationService
 
 router = APIRouter()
 
-service = RegistrationService()
+
+def get_registration_service(session: Session = Depends(get_session)):
+    return RegistrationService(session)
 
 
-@router.get("/", response_model=list[RegistrationResponse], status_code=status.HTTP_200_OK)
-def get_registrations(db: Session = Depends(get_db)):
-    return service.get_registrations(db)
+@router.get(
+    "/", response_model=list[RegistrationResponse], status_code=status.HTTP_200_OK
+)
+def get_registrations(
+    service: RegistrationService = Depends(get_registration_service),
+):
+    return service.get_all()
 
 
 @router.get(
     "/{registration_id}",
     response_model=RegistrationResponse,
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
 )
-def get_registration(registration_id: int, db: Session = Depends(get_db)):
-    registration = service.get_registration(db, registration_id)
+def get_registration(
+    registration_id: int,
+    service: RegistrationService = Depends(get_registration_service),
+):
+    registration = service.get_by_id(registration_id)
     if not registration:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Registration not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Registration not found"
         )
     return registration
 
 
-@router.post("/", response_model=RegistrationResponse, status_code=status.HTTP_201_CREATED)
-def create_registration(data: RegistrationCreate, db: Session = Depends(get_db)):
-    return service.create_registration(db, data)
+@router.post(
+    "/", response_model=RegistrationResponse, status_code=status.HTTP_201_CREATED
+)
+def create_registration(
+    data: RegistrationCreate,
+    service: RegistrationService = Depends(get_registration_service),
+):
+    return service.create(data)
 
 
 @router.put(
     "/{registration_id}",
     response_model=RegistrationResponse,
-    status_code=status.HTTP_200_OK
+    status_code=status.HTTP_200_OK,
 )
 def update_registration(
     registration_id: int,
     data: RegistrationUpdate,
-    db: Session = Depends(get_db)
+    service: RegistrationService = Depends(get_registration_service),
 ):
-    registration = service.update_registration(db, registration_id, data)
+    registration = service.update(registration_id, data)
     if not registration:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Registration not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Registration not found"
         )
     return registration
 
 
 @router.delete("/{registration_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_registration(registration_id: int, db: Session = Depends(get_db)):
-    deleted = service.delete_registration(db, registration_id)
+def delete_registration(
+    registration_id: int,
+    service: RegistrationService = Depends(get_registration_service),
+):
+    deleted = service.delete(registration_id)
     if not deleted:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND,
-            detail="Registration not found"
+            status_code=status.HTTP_404_NOT_FOUND, detail="Registration not found"
         )
     return None

@@ -3,54 +3,34 @@ from fastapi import HTTPException
 
 from app.models.log import Log as LogModel
 from app.schemas.log import LogCreate, LogUpdate, LogPatch
+from app.repositories.log import LogRepository
 
 
 class LogService:
+    def __init__(self, session: Session):
+        self.repo = LogRepository(session)
 
-    def get_logs(self, db: Session):
-        return db.query(LogModel).all()
+    def get_all(self):
+        return self.repo.get_all()
 
-    def get_log(self, db: Session, log_id: int):
-        return db.get(LogModel, log_id)
+    def get_by_id(self, id: int):
+        return self.repo.get_by_id(id)
 
-    def create_log(self, db: Session, data: LogCreate):
-        log = LogModel(**data.model_dump())
-        db.add(log)
-        db.commit()
-        db.refresh(log)
-        return log
+    def create(self, data: LogCreate):
+        model_item = LogModel(**data.model_dump())
+        db_item = self.repo.create(model_item)
+        return db_item
 
-    def update_log(self, db: Session, log_id: int, data: LogUpdate):
-        log = db.get(LogModel, log_id)
-        if not log:
-            return None
+    def put(self, id: int, data: LogUpdate):
+        return self.repo.update(id, data.model_dump())
 
-        for key, value in data.model_dump().items():
-            setattr(log, key, value)
+    def patch(self, id: int, data: LogPatch):
+        return self.repo.update(id, data.model_dump(exclude_unset=True))
 
-        db.add(log)
-        db.commit()
-        db.refresh(log)
-        return log
+    def delete(self, id: int):
+        db_item = self.repo.get_by_id(id)
+        if not db_item:
+            raise HTTPException(404, "Item cannot be found.")
 
-    def patch_log(self, db: Session, log_id: int, data: LogPatch):
-        log = db.get(LogModel, log_id)
-        if not log:
-            return None
-
-        for key, value in data.model_dump(exclude_unset=True).items():
-            setattr(log, key, value)
-
-        db.add(log)
-        db.commit()
-        db.refresh(log)
-        return log
-
-    def delete_log(self, db: Session, log_id: int):
-        log = db.get(LogModel, log_id)
-        if not log:
-            return False
-
-        db.delete(log)
-        db.commit()
-        return True
+        db_item = self.repo.delete(db_item)
+        return db_item
