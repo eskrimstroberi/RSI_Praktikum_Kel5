@@ -1,5 +1,5 @@
 from sqlmodel import Session, select
-from backend.models.registration import Registration as RegistrationModel
+from app.models.registration import Registration as RegistrationModel
 
 
 def create(db: Session, registration: RegistrationModel):

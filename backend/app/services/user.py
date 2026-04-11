@@ -1,7 +1,7 @@
 from sqlmodel import Session
 
-from backend.models.user import User as UserModel
-from backend.schemas.user import UserCreate, UserUpdate
+from app.models.user import User as UserModel
+from app.schemas.user import UserCreate, UserUpdate
 
 
 class UserService:

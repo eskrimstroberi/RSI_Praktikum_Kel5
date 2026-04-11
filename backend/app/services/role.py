@@ -1,7 +1,7 @@
 from sqlmodel import Session, select
 
-from backend.models.role import Role as RoleModel
-from backend.schemas.role import RoleCreate
+from app.models.role import Role as RoleModel
+from app.schemas.role import RoleCreate
 
 
 class RoleService:

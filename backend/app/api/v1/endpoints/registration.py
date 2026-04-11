@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session
 
-from backend.db.session import get_db
-from backend.schemas.registration import (
+from app.db.session import get_db
+from app.schemas.registration import (
     RegistrationCreate,
     RegistrationUpdate,
     RegistrationResponse,
 )
-from backend.services.registration import RegistrationService
+from app.services.registration import RegistrationService
 
 router = APIRouter()
 

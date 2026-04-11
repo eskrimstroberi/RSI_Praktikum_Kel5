@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session
 
-from backend.db.session import get_db
-from backend.schemas.user import UserCreate, UserUpdate, UserResponse
-from backend.services.user import UserService
+from app.db.session import get_db
+from app.schemas.user import UserCreate, UserUpdate, UserResponse
+from app.services.user import UserService
 
 router = APIRouter()
 

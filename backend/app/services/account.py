@@ -1,11 +1,11 @@
 from datetime import datetime
 from fastapi import HTTPException
 from sqlmodel import Session
-import backend.schemas.account as account_schema
-import backend.repositories.account as account_repo
-from backend.models.user import User as UserModel
-from backend.models.account import Account as AccountModel
-from backend.models.role import Role as RoleModel
+import app.schemas.account as account_schema
+import app.repositories.account as account_repo
+from app.models.user import User as UserModel
+from app.models.account import Account as AccountModel
+from app.models.role import Role as RoleModel
 
 
 def create_account_service(db: Session, account_data: account_schema.AccountCreate):

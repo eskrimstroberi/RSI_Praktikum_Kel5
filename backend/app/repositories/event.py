@@ -1,5 +1,5 @@
 from sqlmodel import Session, select
-from backend.models.event import Event as EventModel
+from app.models.event import Event as EventModel
 
 
 def get_all(db: Session):

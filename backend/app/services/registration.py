@@ -1,7 +1,7 @@
 from sqlmodel import Session
 
-from backend.models.registration import Registration as RegistrationModel
-from backend.schemas.registration import RegistrationCreate, RegistrationUpdate
+from app.models.registration import Registration as RegistrationModel
+from app.schemas.registration import RegistrationCreate, RegistrationUpdate
 
 
 class RegistrationService:

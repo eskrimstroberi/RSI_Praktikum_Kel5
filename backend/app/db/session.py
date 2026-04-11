@@ -1,7 +1,7 @@
 from sqlmodel import create_engine, Session
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import SQLAlchemyError
-from backend.core.config import settings
+from app.core.config import settings
 
 engine = create_engine(settings.DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

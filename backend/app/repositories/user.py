@@ -1,6 +1,6 @@
 from sqlmodel import Session, select
-from backend.schemas.user import UserBase
-from backend.models.user import User as UserModel
+from app.schemas.user import UserBase
+from app.models.user import User as UserModel
 
 
 def create(db: Session, user: UserBase):
