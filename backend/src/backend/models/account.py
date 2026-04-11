@@ -1,29 +1,30 @@
 from datetime import datetime
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, Text, ForeignKey, DateTime
+from sqlalchemy import Text, DateTime
 from sqlalchemy.sql import func
-from backend.db.base_model import Base
+from sqlmodel import Column, SQLModel, Relationship, Field
 
 
-class Account(Base):
+class Account(SQLModel, table=True):
     __tablename__ = "Account"
 
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey("User.id"))
-    role_id: Mapped[int] = mapped_column(ForeignKey("Role.id"))
-    email: Mapped[str] = mapped_column(Text, nullable=False, unique=True)
-    username: Mapped[str] = mapped_column(String(16), nullable=False, unique=True)
-    password: Mapped[str] = mapped_column(Text, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
+    id: int = Field(primary_key=True, index=True)
+    user_id: int = Field(foreign_key="User.id")
+    role_id: int = Field(foreign_key="Role.id")
+    email: str = Field(Text, nullable=False, unique=True)
+    username: str = Field(max_length=16, nullable=False, unique=True)
+    password: str = Field(Text, nullable=False)
+    created_at: datetime = Field(
+        sa_column=Column(DateTime(timezone=True), server_default=func.now())
     )
-    updated_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True),
-        server_default=func.now(),
-        onupdate=func.now(),
-        nullable=True,
+    updated_at: datetime | None = Field(
+        sa_column=Column(
+            DateTime(timezone=True),
+            server_default=func.now(),
+            onupdate=func.now(),
+            nullable=True,
+        )
     )
 
-    user: Mapped["User"] = relationship("User", back_populates="accounts")
-    role: Mapped["Role"] = relationship("Role", back_populates="accounts")
-    logs: Mapped[list["Log"]] = relationship("Log", back_populates="account")
+    user: "User" = Relationship(back_populates="accounts")
+    role: "Role" = Relationship(back_populates="accounts")
+    logs: list["Log"] = Relationship(back_populates="account")

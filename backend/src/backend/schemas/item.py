@@ -1,12 +1,15 @@
-from pydantic import BaseModel
+from sqlmodel import SQLModel
+from sqlmodel.main import SQLModelConfig
 
 
-class ItemBase(BaseModel):
+class ItemBase(SQLModel):
     id: int | None = None
     name: str
 
+    model_config: SQLModelConfig = SQLModelConfig(from_attributes=True)
 
-class ItemCreate(BaseModel):
+
+class ItemCreate(SQLModel):
     name: str
 
 
