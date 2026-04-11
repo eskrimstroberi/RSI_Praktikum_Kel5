@@ -1,29 +1,28 @@
-from sqlmodel import Session, select
+from fastapi import HTTPException
+from sqlmodel import Session
 
 from app.models.role import Role as RoleModel
+from app.repositories.role import RoleRepository
 from app.schemas.role import RoleCreate
 
 
 class RoleService:
-    def get_roles(self, db: Session):
-        return db.exec(select(RoleModel)).all()
+    def __init__(self, session: Session):
+        self.repo = RoleRepository(session)
 
-    def get_role(self, db: Session, role_id: int):
-        return db.get(RoleModel, role_id)
+    def get_all(self):
+        return self.repo.get_all()
 
-    def create_role(self, db: Session, data: RoleCreate):
-        role = RoleModel(**data.model_dump())
-        db.add(role)
-        db.commit()
-        db.refresh(role)
-        return role
+    def get_by_id(self, id: int):
+        return self.repo.get_by_id(id)
 
-    def delete_role(self, db: Session, role_id: int):
-        role = db.get(RoleModel, role_id)
-        if not role:
-            return False
+    def create(self, data: RoleCreate):
+        model_item = RoleModel(**data.model_dump())
+        db_item = self.repo.create(model_item)
+        return db_item
 
-        db.delete(role)
-        db.commit()
-        return True
-
+    def delete(self, id: int):
+        db_item = self.repo.get_by_id(id)
+        if not db_item:
+            raise HTTPException(404, "Item cannot be found.")
+        return self.repo.delete(db_item)

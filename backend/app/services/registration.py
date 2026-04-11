@@ -1,42 +1,34 @@
+from fastapi import HTTPException
 from sqlmodel import Session
 
 from app.models.registration import Registration as RegistrationModel
 from app.schemas.registration import RegistrationCreate, RegistrationUpdate
+from app.repositories.registration import RegistrationRepository
 
 
 class RegistrationService:
-    def get_registrations(self, db: Session):
-        return db.query(RegistrationModel).all()
+    def __init__(self, session: Session):
+        self.repo = RegistrationRepository(session)
 
-    def get_registration(self, db: Session, registration_id: int):
-        return db.get(RegistrationModel, registration_id)
+    def get_all(self):
+        return self.repo.get_all()
 
-    def create_registration(self, db: Session, data: RegistrationCreate):
-        registration = RegistrationModel(**data.model_dump())
-        db.add(registration)
-        db.commit()
-        db.refresh(registration)
-        return registration
+    def get_by_id(self, id: int):
+        return self.repo.get_by_id(id)
 
-    def update_registration(
-        self, db: Session, registration_id: int, data: RegistrationUpdate
-    ):
-        registration = db.get(RegistrationModel, registration_id)
+    def create(self, data: RegistrationCreate):
+        model_item = RegistrationModel(**data.model_dump())
+        return self.repo.create(model_item)
+
+    def update(self, id: int, data: RegistrationUpdate):
+        registration = self.repo.get_by_id(id)
         if not registration:
-            return None
+            raise HTTPException(status_code=404, detail="Registration not found")
+        return self.repo.update(id, data.model_dump(exclude_unset=True))
 
-        for key, value in data.model_dump().items():
-            setattr(registration, key, value)
+    def delete(self, id: int):
+        db_item = self.repo.get_by_id(id)
+        if not db_item:
+            raise HTTPException(status_code=404, detail="User not found")
 
-        db.commit()
-        return registration
-
-    def delete_registration(self, db: Session, registration_id: int):
-        registration = db.get(RegistrationModel, registration_id)
-        if not registration:
-            return False
-
-        db.delete(registration)
-        db.commit()
-        return True
-
+        return self.repo.delete(db_item)

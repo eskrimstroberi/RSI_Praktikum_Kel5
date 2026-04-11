@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
-from app.db.session import get_db
+from app.db.session import get_session
 from app.models.account import Account
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="api/v1/login")
@@ -22,7 +22,7 @@ def create_access_token(data: dict[str, Any]):
 
 
 def get_current_user(
-    db: Session = Depends(get_db), token: str = Depends(oauth2_scheme)
+    db: Session = Depends(get_session), token: str = Depends(oauth2_scheme)
 ) -> int:
     try:
         payload = jwt.decode(
@@ -37,7 +37,7 @@ def get_current_user(
 
 
 def get_current_user_role(
-    db: Session = Depends(get_db), account_id: int = Depends(get_current_user)
+    db: Session = Depends(get_session), account_id: int = Depends(get_current_user)
 ) -> str:
     account = db.get_one(Account, account_id)
     if not account:
