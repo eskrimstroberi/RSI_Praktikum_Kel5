@@ -1,10 +1,13 @@
-from fastapi import HTTPException
+import token
+from fastapi import HTTPException, Response
 from sqlmodel import Session
-from app.models.account import Account as AccountModel
+
+from app.core.security import create_access_token, hash_password, verify_password
 import app.schemas.account as account_schema
+from app.models.account import Account as AccountModel
 from app.repositories.account import AccountRepository
-from app.repositories.user import UserRepository
 from app.repositories.role import RoleRepository
+from app.repositories.user import UserRepository
 
 
 class AccountService:
@@ -23,6 +26,7 @@ class AccountService:
             raise HTTPException(status_code=404, detail="Role not found")
 
         account = AccountModel(**data.model_dump())
+        account.password = hash_password(data.password)
         return self.repo.create(account)
 
     def get_all(self):
@@ -40,3 +44,36 @@ class AccountService:
             raise HTTPException(status_code=404, detail="Account not found")
 
         return self.repo.delete(db_item)
+
+    def login(self, data: account_schema.AccountLogin, response: Response):
+        account = self.repo.get_by_username(data.username)
+        if not account:
+            raise HTTPException(status_code=404, detail="Account not found.")
+
+        password_correct = verify_password(account.password, data.password)
+        if not password_correct:
+            raise HTTPException(
+                status_code=401, detail="Incorrect username or password."
+            )
+
+        token_data = {"sub": str(account.id)}
+        access_token = create_access_token(data=token_data)
+        response.set_cookie(
+            key="access_token",
+            value=f"Bearer {access_token}",
+            httponly=True,
+            max_age=(86400 * 7),
+            samesite="lax",
+            secure=True,
+        )
+
+        return True
+
+    def logout(self, response: Response):
+        response.delete_cookie(
+            key="access_token",
+            httponly=True,
+            samesite="lax",
+            secure=True,
+        )
+        return True

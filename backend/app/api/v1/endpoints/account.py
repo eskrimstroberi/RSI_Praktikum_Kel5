@@ -1,8 +1,9 @@
-from fastapi import Depends, APIRouter
+from fastapi import Depends, APIRouter, Request, Response
 from sqlmodel import Session
 
+from app.core.security import get_current_user
 from app.db.session import get_session
-from app.schemas.account import AccountCreate, AccountResponse
+from app.schemas.account import AccountCreate, AccountResponse, AccountLogin
 from app.services.account import AccountService
 
 router = APIRouter()
@@ -36,3 +37,22 @@ def delete_account(
     account_id: int, service: AccountService = Depends(get_account_service)
 ):
     return service.delete(account_id)
+
+
+@router.post("/login")
+def login(
+    data: AccountLogin,
+    response: Response,
+    service: AccountService = Depends(get_account_service),
+):
+    service.login(data, response)
+    return {"message": "Successfully logged in"}
+
+
+@router.post("/logout")
+def login(
+    response: Response,
+    service: AccountService = Depends(get_account_service),
+):
+    service.logout(response)
+    return {"message": "Successfully logged out"}
