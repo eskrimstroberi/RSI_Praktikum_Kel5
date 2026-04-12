@@ -1,4 +1,3 @@
-import token
 from fastapi import HTTPException, Response
 from sqlmodel import Session
 

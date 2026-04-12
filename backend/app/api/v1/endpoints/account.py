@@ -45,14 +45,14 @@ def login(
     response: Response,
     service: AccountService = Depends(get_account_service),
 ):
-    service.login(data, response)
-    return {"message": "Successfully logged in"}
+    if service.login(data, response):
+        return {"message": "Successfully logged in"}
 
 
 @router.post("/logout")
-def login(
+def logout(
     response: Response,
     service: AccountService = Depends(get_account_service),
 ):
-    service.logout(response)
-    return {"message": "Successfully logged out"}
+    if service.logout(response):
+        return {"message": "Successfully logged out"}
