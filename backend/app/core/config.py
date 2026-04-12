@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     JWT_SECRET_KEY: str = Field(default="None")
     JWT_ALGORITHM: str = Field(default="None")
 
-    model_config = SettingsConfigDict(env_file=".env")
+    model_config = SettingsConfigDict(env_file_encoding="utf-8", extra="ignore")
 
 
 settings = Settings()

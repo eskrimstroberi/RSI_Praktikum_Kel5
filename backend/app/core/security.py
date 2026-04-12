@@ -1,15 +1,17 @@
 from typing import Any
 from datetime import datetime, timedelta, UTC
+from enum import Enum
 
 import jwt
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
+from app.models.enums import RoleName
 from app.models.account import Account
 from app.db.session import get_session
 
@@ -38,33 +40,47 @@ def create_access_token(data: dict[str, Any]):
 
 
 def get_current_user(
-    db: Session = Depends(get_session), token: str = Depends(oauth2_scheme)
+    request: Request,
+    db: Session = Depends(get_session),
 ) -> int:
+    token_cookie = request.cookies.get("access_token")
+
+    if not token_cookie:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token missing. Please log in.",
+        )
+
     try:
+        token = token_cookie.replace("Bearer ", "")
         payload = jwt.decode(
             token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
         )
         user_id: str | None = payload.get("sub")
+
         if user_id is None:
-            raise HTTPException(status_code=401, detail="Invalid token")
+            raise HTTPException(status_code=401, detail="Invalid token payload")
+
         return int(user_id)
-    except Exception:
-        raise HTTPException(status_code=401, detail="Could not validate credentials")
+
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token has expired")
+    except jwt.PyJWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
 
 
 def get_current_user_role(
     db: Session = Depends(get_session), account_id: int = Depends(get_current_user)
 ) -> str:
-    account = db.get_one(Account, account_id)
-    if not account:
-        raise HTTPException(status_code=404, detail="User not found")
+    account = db.get(Account, account_id)
+    if not account or not account.role:
+        raise HTTPException(status_code=404, detail="User or Role not found")
 
-    # Return the string name of the role (e.g., "Admin", "User")
     return account.role.name
 
 
 class RoleChecker:
-    def __init__(self, allowed_roles: list[str]):
+    def __init__(self, allowed_roles: list[RoleName]):
         self.allowed_roles = allowed_roles
 
     def __call__(self, user_role: str = Depends(get_current_user_role)):
@@ -74,3 +90,22 @@ class RoleChecker:
                 detail=f"Access denied. Required: {self.allowed_roles}",
             )
         return True
+
+
+class RoleName(str, Enum):
+    SUPER_ADMIN = "SuperAdmin"
+    ADMIN = "Admin"
+    USER = "User"
+
+    @classmethod
+    def get_hierarchy(cls, role: "RoleName"):
+        levels = {
+            cls.SUPER_ADMIN: [cls.SUPER_ADMIN],
+            cls.ADMIN: [cls.ADMIN, cls.SUPER_ADMIN],
+            cls.USER: [cls.USER, cls.ADMIN, cls.SUPER_ADMIN],
+        }
+        return levels.get(role, [])
+
+
+ALLOW_ADMIN = RoleChecker(allowed_roles=RoleName.get_hierarchy(RoleName.ADMIN))
+ALLOW_USER = RoleChecker(allowed_roles=RoleName.get_hierarchy(RoleName.USER))

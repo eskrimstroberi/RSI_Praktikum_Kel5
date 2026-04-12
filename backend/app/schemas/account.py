@@ -16,6 +16,11 @@ class AccountCreate(AccountBase):
     password: str
 
 
+class AccountLogin(SQLModel):
+    username: str
+    password: str
+
+
 class AccountResponse(AccountBase):
     id: int
     created_at: datetime
