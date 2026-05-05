@@ -29,7 +29,7 @@ services:
         condition: service_healthy
     volumes:
       - ./backend:/app:z
-      - /app/.venv
+      - venv:/app/.venv:z
     networks:
       - rsinet
     healthcheck:
@@ -71,6 +71,7 @@ volumes:
   postgres_data:
   bun_cache:
   node_modules:
+  venv:
 
 networks:
   rsinet:
