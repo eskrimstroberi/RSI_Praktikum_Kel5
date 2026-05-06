@@ -13,12 +13,17 @@ def get_log_service(session: Session = Depends(get_session)):
 
 
 @router.get("/", response_model=list[LogRead])
-def get_logs(service: LogService = Depends(get_log_service)):
+def get_logs(
+    service: LogService = Depends(get_log_service)
+):
     return service.get_all()
 
 
 @router.get("/{log_id}", response_model=LogRead, status_code=status.HTTP_200_OK)
-def get_log(log_id: int, service: LogService = Depends(get_log_service)):
+def get_log(
+    log_id: int,
+    service: LogService = Depends(get_log_service)
+):
     log = service.get_by_id(log_id)
     if not log:
         raise HTTPException(
@@ -28,13 +33,18 @@ def get_log(log_id: int, service: LogService = Depends(get_log_service)):
 
 
 @router.post("/", response_model=LogRead, status_code=status.HTTP_201_CREATED)
-def create_log(data: LogCreate, service: LogService = Depends(get_log_service)):
+def create_log(
+    data: LogCreate,
+    service: LogService = Depends(get_log_service)
+):
     return service.create(data)
 
 
 @router.put("/{log_id}", response_model=LogRead, status_code=status.HTTP_200_OK)
 def update_log(
-    log_id: int, data: LogUpdate, service: LogService = Depends(get_log_service)
+    log_id: int,
+    data: LogUpdate,
+    service: LogService = Depends(get_log_service)
 ):
     log = service.put(log_id, data)
     if not log:
@@ -46,7 +56,9 @@ def update_log(
 
 @router.patch("/{log_id}", response_model=LogRead, status_code=status.HTTP_200_OK)
 def patch_log(
-    log_id: int, data: LogPatch, service: LogService = Depends(get_log_service)
+    log_id: int,
+    data: LogPatch,
+    service: LogService = Depends(get_log_service)
 ):
     log = service.patch(log_id, data)
     if not log:
@@ -57,7 +69,10 @@ def patch_log(
 
 
 @router.delete("/{log_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_log(log_id: int, service: LogService = Depends(get_log_service)):
+def delete_log(
+    log_id: int,
+    service: LogService = Depends(get_log_service)
+):
     deleted = service.delete(log_id)
     if not deleted:
         raise HTTPException(

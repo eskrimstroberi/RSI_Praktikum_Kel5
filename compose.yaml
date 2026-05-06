@@ -27,7 +27,7 @@ services:
         condition: service_healthy
     volumes:
       - ./backend:/app:z
-      - /backend/.venv
+ #     - /backend/.venv
     networks:
       - rsinet
     healthcheck:
