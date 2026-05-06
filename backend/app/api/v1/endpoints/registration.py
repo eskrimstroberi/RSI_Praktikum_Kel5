@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlmodel import Session
 
+from app.core.security import ALLOW_ADMIN, ALLOW_USER
 from app.db.session import get_session
 from app.schemas.registration import (
     RegistrationCreate,
@@ -20,6 +21,7 @@ def get_registration_service(session: Session = Depends(get_session)):
     "/", response_model=list[RegistrationResponse], status_code=status.HTTP_200_OK
 )
 def get_registrations(
+    auth=Depends(ALLOW_ADMIN),
     service: RegistrationService = Depends(get_registration_service),
 ):
     return service.get_all()
@@ -32,12 +34,14 @@ def get_registrations(
 )
 def get_registration(
     registration_id: int,
+    auth=Depends(ALLOW_USER),
     service: RegistrationService = Depends(get_registration_service),
 ):
     registration = service.get_by_id(registration_id)
     if not registration:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Registration not found"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Registration not found",
         )
     return registration
 
@@ -47,6 +51,7 @@ def get_registration(
 )
 def create_registration(
     data: RegistrationCreate,
+    auth=Depends(ALLOW_USER),
     service: RegistrationService = Depends(get_registration_service),
 ):
     return service.create(data)
@@ -60,12 +65,14 @@ def create_registration(
 def update_registration(
     registration_id: int,
     data: RegistrationUpdate,
+    auth=Depends(ALLOW_ADMIN),
     service: RegistrationService = Depends(get_registration_service),
 ):
     registration = service.update(registration_id, data)
     if not registration:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Registration not found"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Registration not found",
         )
     return registration
 
@@ -73,11 +80,13 @@ def update_registration(
 @router.delete("/{registration_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_registration(
     registration_id: int,
+    auth=Depends(ALLOW_ADMIN),
     service: RegistrationService = Depends(get_registration_service),
 ):
     deleted = service.delete(registration_id)
     if not deleted:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Registration not found"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Registration not found",
         )
     return None
