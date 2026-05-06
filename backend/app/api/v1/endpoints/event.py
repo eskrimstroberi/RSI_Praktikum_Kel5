@@ -15,7 +15,7 @@ def get_event_service(session: Session = Depends(get_session)):
 
 @router.get("/", response_model=list[EventResponse], status_code=status.HTTP_200_OK)
 def get_events(
-    auth=Depends(ALLOW_ADMIN), service: EventService = Depends(get_event_service)
+    auth=Depends(ALLOW_USER), service: EventService = Depends(get_event_service)
 ):
     return service.get_all()
 
