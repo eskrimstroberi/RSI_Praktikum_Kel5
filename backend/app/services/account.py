@@ -37,6 +37,12 @@ class AccountService:
             raise HTTPException(status_code=404, detail="Account not found")
         return db_item
 
+    def get_with_roles_by_id(self, id: int):
+        db_item = self.repo.get_with_roles_by_id(id)
+        if not db_item:
+            raise HTTPException(status_code=404, detail="Account not found")
+        return db_item
+
     def delete(self, id: int):
         db_item = self.repo.get_by_id(id)
         if not db_item:
