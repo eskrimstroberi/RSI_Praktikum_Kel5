@@ -68,8 +68,8 @@ class AccountService:
             value=f"Bearer {access_token}",
             httponly=True,
             max_age=(86400 * 7),
-            samesite="lax",
-            secure=True,
+            samesite="none",
+            secure=False,
         )
 
         return True
@@ -78,7 +78,7 @@ class AccountService:
         response.delete_cookie(
             key="access_token",
             httponly=True,
-            samesite="lax",
-            secure=True,
+            samesite="none",
+            secure=False,
         )
         return True
