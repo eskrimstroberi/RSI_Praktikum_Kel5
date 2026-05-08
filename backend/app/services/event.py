@@ -24,7 +24,7 @@ class EventService:
         db_item = self.repo.get_by_id(id)
         if not db_item:
             raise HTTPException(404, "Item cannot be found.")
-        return self.repo.update(id, db_item.model_dump(exclude_unset=True))
+        return self.repo.update(id, data.model_dump(exclude_unset=True))
 
     def delete(self, id: int):
         db_item = self.repo.get_by_id(id)
