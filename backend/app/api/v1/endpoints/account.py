@@ -12,6 +12,17 @@ def get_account_service(session: Session = Depends(get_session)):
     return AccountService(session)
 
 
+@router.get("/me", response_model=AccountResponse)
+def get_me(
+    account_id: int = Depends(get_current_user),
+    service: AccountService = Depends(get_account_service),
+):
+    account = service.get_with_roles_by_id(account_id)
+    if not account:
+        raise HTTPException(status_code=404, detail="Account not found")
+    return account
+
+
 @router.get("/", response_model=list[AccountResponse])
 def get_accounts(
     service: AccountService = Depends(get_account_service)
@@ -24,7 +35,7 @@ def get_account(
     account_id: int,
     service: AccountService = Depends(get_account_service)
 ):
-    return service.get_by_id(account_id)
+    return service.get_with_roles_by_id(account_id)
 
 
 @router.post("/", response_model=AccountResponse)
