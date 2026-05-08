@@ -17,6 +17,6 @@ class AccountRepository(BaseRepository[AccountModel]):
         query = (
             select(AccountModel)
             .where(AccountModel.id == id)
-            .options(selectinload(AccountModel.role))
+            .options(selectinload(AccountModel.role), selectinload(AccountModel.user))
         )
         return self.session.exec(query).one_or_none()

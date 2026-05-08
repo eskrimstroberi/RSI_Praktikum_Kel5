@@ -1,5 +1,6 @@
 from datetime import datetime
 from app.schemas.role import RoleResponse
+from app.schemas.user import UserResponse
 from sqlmodel import SQLModel
 from sqlmodel.main import SQLModelConfig
 
@@ -27,3 +28,4 @@ class AccountResponse(AccountBase):
     created_at: datetime
     updated_at: datetime
     role: RoleResponse | None = None
+    user: UserResponse | None = None
