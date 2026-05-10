@@ -6,9 +6,16 @@ class Settings(BaseSettings):
     # Use Field(default=...) to satisfy Error diagnostics
     POSTGRES_USER: str = Field(default="postgres")
     POSTGRES_PASSWORD: str = Field(default="DefaultPassword123!")
+
+    # DOCKER CONFIG
     POSTGRES_SERVER: str = Field(default="postgres")
-    POSTGRES_DB: str = Field(default="postgres")
     POSTGRES_PORT: int = Field(default=5432)
+
+    # LOCAL TESTING (Uncomment kalau mau testing localhost)
+    # POSTGRES_SERVER: str = Field(default="localhost")
+    # POSTGRES_PORT: int = Field(default=5432)
+
+    POSTGRES_DB: str = Field(default="postgres")
 
     @property
     def DATABASE_URL(self) -> str:
