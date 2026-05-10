@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import axios from "axios";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -87,21 +86,45 @@ export default function RegisterPage() {
     try {
       setLoading(true);
 
-      const userResponse = await axios.post(`${BASE_URL}/user/`, {
-        first_name: formData.first_name,
-        last_name: formData.last_name,
-        whatsapp: formData.whatsapp,
+      // CREATE USER
+      const userResponse = await fetch(`${BASE_URL}/user/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          first_name: formData.first_name,
+          last_name: formData.last_name,
+          whatsapp: formData.whatsapp,
+        }),
       });
 
-      const userId = userResponse.data.id;
+      if (!userResponse.ok) {
+        throw new Error("Failed to create user.");
+      }
 
-      await axios.post(`${BASE_URL}/account/`, {
-        user_id: userId,
-        role_id: 6,
-        email: formData.email,
-        username: formData.username,
-        password: formData.password,
+      const userData = await userResponse.json();
+
+      const userId = userData.id;
+
+      // CREATE ACCOUNT
+      const accountResponse = await fetch(`${BASE_URL}/account/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          role_id: 6,
+          email: formData.email,
+          username: formData.username,
+          password: formData.password,
+        }),
       });
+
+      if (!accountResponse.ok) {
+        throw new Error("Failed to create account.");
+      }
 
       setSuccess("Register successful!");
 
@@ -114,14 +137,10 @@ export default function RegisterPage() {
         password: "",
         confirmPassword: "",
       });
+
     } catch (err: any) {
       console.error(err);
-
-      if (err.response?.data?.detail) {
-        setError(err.response.data.detail);
-      } else {
-        setError("Registration failed.");
-      }
+      setError(err.message || "Registration failed.");
     } finally {
       setLoading(false);
     }
@@ -232,7 +251,7 @@ export default function RegisterPage() {
                 onChange={handleChange}
                 placeholder="johndoe88"
                 className="w-full border border-gray-300 rounded-xl p-3 text-black bg-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#004AC6]"
-              />
+                />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
