@@ -69,7 +69,7 @@ class AccountService:
             httponly=True,
             max_age=(86400 * 7),
             samesite="none",
-            secure=False,
+            secure=True,
         )
 
         return True
@@ -79,6 +79,6 @@ class AccountService:
             key="access_token",
             httponly=True,
             samesite="none",
-            secure=False,
+            secure=True,
         )
         return True

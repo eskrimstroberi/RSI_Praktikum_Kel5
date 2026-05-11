@@ -28,15 +28,15 @@ export default function AdminLayout({
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthorized, setIsAuthorized] = useState(false);
-  // const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [account, setAccount] = useState<AccountResponse | null>(null);
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8082/api/v1";
+        const API_VERSION = "v1"
 
-        const response = await fetch(`${API_BASE_URL}/account/me`, {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/${API_VERSION}/account/me`, {
           credentials: "include",
           headers: {
             "Content-Type": "application/json",
