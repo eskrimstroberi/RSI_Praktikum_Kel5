@@ -56,6 +56,10 @@ services:
       dockerfile: Containerfile
       target: development
     working_dir: /app
+    environment:
+      API_URL: http://${HOST_IP:-localhost}:${FASTAPI_PORT:-8080}/api
+      NEXT_PUBLIC_API_URL: http://${HOST_IP:-localhost}:${FASTAPI_PORT:-8080}/api
+      NEXT_PUBLIC_API_VERSION: v${API_VERSION:-1}
     env_file:
       - .env
     ports:

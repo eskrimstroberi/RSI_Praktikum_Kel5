@@ -10,16 +10,18 @@ class Settings(BaseSettings):
     # DOCKER CONFIG
     POSTGRES_SERVER: str = Field(default="postgres")
     POSTGRES_PORT: int = Field(default=5432)
-
-    # LOCAL TESTING (Uncomment kalau mau testing localhost)
-    # POSTGRES_SERVER: str = Field(default="localhost")
-    # POSTGRES_PORT: int = Field(default=5432)
-
     POSTGRES_DB: str = Field(default="postgres")
+
+    HOST_IP: str = Field(default="localhost")
+    FRONTEND_PORT: int = Field(default=3000)
 
     @property
     def DATABASE_URL(self) -> str:
         return f"postgresql://{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}@{self.POSTGRES_SERVER}:{self.POSTGRES_PORT}/{self.POSTGRES_DB}"
+
+    @property
+    def FRONTEND_URL(self) -> str:
+        return f"http://{self.HOST_IP}:{self.FRONTEND_PORT}"
 
     JWT_SECRET_KEY: str = Field(default="None")
     JWT_ALGORITHM: str = Field(default="None")
@@ -28,3 +30,4 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+

@@ -1,7 +1,8 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8082/api/v1";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL;
+const API_VERSION = "v1";
 
 async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
-  const url = `${API_BASE_URL}${endpoint}`;
+  const url = `${API_BASE_URL}/${API_VERSION}${endpoint}`;
 
   const defaultHeaders: HeadersInit = {
     "Content-Type": "application/json",
