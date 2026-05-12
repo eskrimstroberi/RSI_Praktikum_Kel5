@@ -186,11 +186,19 @@ export default function EventRegisterPage() {
 
                     </form>
 
-                    <p className="text-sm text-gray-500 text-center mt-6">
-                        Don&apos;t have an account?{" "}
-                        <a href="/register" className="text-[#004AC6] font-semibold cursor-pointer hover:underline">
-                            Create one
-                        </a>
+                    <p className="text-sm text-gray-500 text-center mt-6 flex flex-col gap-2">
+                        <span>
+                            Don&apos;t have an account?{" "}
+                            <a href="/register" className="text-[#004AC6] font-semibold cursor-pointer hover:underline">
+                                Create one
+                            </a>
+                        </span>
+                        <span>
+                            Already have an account?{" "}
+                            <a href="/login" className="text-[#004AC6] font-semibold cursor-pointer hover:underline">
+                                Login here
+                            </a>
+                        </span>
                     </p>
 
                 </div>
