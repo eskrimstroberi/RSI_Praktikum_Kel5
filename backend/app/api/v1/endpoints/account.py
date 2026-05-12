@@ -1,9 +1,10 @@
-from fastapi import Depends, APIRouter, Request, Response
+from fastapi import Depends, APIRouter, Request, Response, HTTPException
 from sqlmodel import Session
 
 from app.db.session import get_session
 from app.schemas.account import AccountCreate, AccountResponse, AccountLogin
 from app.services.account import AccountService
+from app.core.security import get_current_user
 
 router = APIRouter()
 
@@ -24,32 +25,27 @@ def get_me(
 
 
 @router.get("/", response_model=list[AccountResponse])
-def get_accounts(
-    service: AccountService = Depends(get_account_service)
-):
+def get_accounts(service: AccountService = Depends(get_account_service)):
     return service.get_all()
 
 
 @router.get("/{account_id}", response_model=AccountResponse)
 def get_account(
-    account_id: int,
-    service: AccountService = Depends(get_account_service)
+    account_id: int, service: AccountService = Depends(get_account_service)
 ):
     return service.get_with_roles_by_id(account_id)
 
 
 @router.post("/", response_model=AccountResponse)
 def create_account(
-    data: AccountCreate,
-    service: AccountService = Depends(get_account_service)
+    data: AccountCreate, service: AccountService = Depends(get_account_service)
 ):
     return service.create(data)
 
 
 @router.delete("/{account_id}")
 def delete_account(
-    account_id: int,
-    service: AccountService = Depends(get_account_service)
+    account_id: int, service: AccountService = Depends(get_account_service)
 ):
     return service.delete(account_id)
 
@@ -71,3 +67,4 @@ def logout(
 ):
     if service.logout(response):
         return {"message": "Successfully logged out"}
+
