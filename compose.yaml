@@ -28,8 +28,8 @@ services:
       postgres:
         condition: service_healthy
     volumes:
-      - ./backend:/app:z
-      - venv:/app/.venv:z
+    - ./backend:/app:z
+    - venv:/app/.venv:z
     networks:
       - rsinet
     healthcheck:
