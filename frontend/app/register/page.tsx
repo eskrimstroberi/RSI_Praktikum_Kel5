@@ -129,7 +129,6 @@ export default function RegisterPage() {
           console.log(errorData);
           throw new Error(errorData);
         }
-
       setSuccess("Register successful!");
 
       setFormData({
@@ -141,7 +140,6 @@ export default function RegisterPage() {
         password: "",
         confirmPassword: "",
       });
-
     } catch (err: any) {
       console.error(err);
       setError(err.message || "Registration failed.");
