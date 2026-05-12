@@ -17,8 +17,6 @@ export default function LoginPage() {
 
   const router = useRouter();
 
-  const BASE_URL = "http://localhost:8082/api/v1";
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
 
@@ -54,7 +52,7 @@ export default function LoginPage() {
     try {
       setLoading(true);
 
-      const response = await fetch(`${BASE_URL}/account/login`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/account/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -70,8 +68,8 @@ export default function LoginPage() {
       if (!response.ok) {
         setError(
           data?.detail ||
-            data?.message ||
-            "Invalid username or password."
+          data?.message ||
+          "Invalid username or password."
         );
         return;
       }

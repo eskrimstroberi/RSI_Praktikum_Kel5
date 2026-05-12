@@ -19,8 +19,6 @@ export default function RegisterPage() {
   const [success, setSuccess] = useState("");
   const router = useRouter();
 
-  const BASE_URL = "http://localhost:8082/api/v1";
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
@@ -89,7 +87,7 @@ export default function RegisterPage() {
       setLoading(true);
 
       // CREATE USER
-      const userResponse = await fetch(`${BASE_URL}/user/`, {
+      const userResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/user/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -110,7 +108,7 @@ export default function RegisterPage() {
       const userId = userData.id;
 
       // CREATE ACCOUNT
-      const accountResponse = await fetch(`${BASE_URL}/account/`, {
+      const accountResponse = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/v1/account/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -125,10 +123,10 @@ export default function RegisterPage() {
       });
 
       if (!accountResponse.ok) {
-          const errorData = await accountResponse.text();
-          console.log(errorData);
-          throw new Error(errorData);
-        }
+        const errorData = await accountResponse.text();
+        console.log(errorData);
+        throw new Error(errorData);
+      }
 
       setSuccess("Register successful!");
 
@@ -255,7 +253,7 @@ export default function RegisterPage() {
                 onChange={handleChange}
                 placeholder="johndoe88"
                 className="w-full border border-gray-300 rounded-xl p-3 text-black bg-white placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#004AC6]"
-                />
+              />
             </div>
 
             <div className="grid grid-cols-2 gap-4">
