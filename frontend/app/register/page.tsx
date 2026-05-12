@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function RegisterPage() {
@@ -16,8 +17,9 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const router = useRouter();
 
-  const BASE_URL = "http://localhost:8081/api/v1";
+  const BASE_URL = "http://localhost:8082/api/v1";
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -115,7 +117,7 @@ export default function RegisterPage() {
         },
         body: JSON.stringify({
           user_id: userId,
-          role_id: 6,
+          role_id: 3,
           email: formData.email,
           username: formData.username,
           password: formData.password,
@@ -123,8 +125,10 @@ export default function RegisterPage() {
       });
 
       if (!accountResponse.ok) {
-        throw new Error("Failed to create account.");
-      }
+          const errorData = await accountResponse.text();
+          console.log(errorData);
+          throw new Error(errorData);
+        }
 
       setSuccess("Register successful!");
 
@@ -311,8 +315,11 @@ export default function RegisterPage() {
 
           <p className="text-sm text-gray-500 text-center mt-6">
             Already have an account?{" "}
-            <span className="text-[#004AC6] font-semibold cursor-pointer hover:underline">
-              Login
+            <span
+              className="text-[#004AC6] font-semibold cursor-pointer hover:underline"
+              onClick={() => router.push("/login")}
+            >
+              Login now
             </span>
           </p>
 
