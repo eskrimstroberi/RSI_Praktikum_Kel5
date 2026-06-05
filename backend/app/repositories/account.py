@@ -13,6 +13,10 @@ class AccountRepository(BaseRepository[AccountModel]):
         query = select(self.model).where(self.model.username == data)
         return self.session.exec(query).one_or_none()
 
+    def get_by_email(self, email: str):
+        query = select(self.model).where(self.model.email == email)
+        return self.session.exec(query).one_or_none()
+
     def get_with_roles_by_id(self, id: int):
         query = (
             select(AccountModel)

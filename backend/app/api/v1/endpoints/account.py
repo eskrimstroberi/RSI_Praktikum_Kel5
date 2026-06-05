@@ -54,9 +54,10 @@ def delete_account(
 def login(
     data: AccountLogin,
     response: Response,
+    request: Request,
     service: AccountService = Depends(get_account_service),
 ):
-    if service.login(data, response):
+    if service.login(data, response, request):
         return {"message": "Successfully logged in"}
 
 

@@ -1,4 +1,4 @@
-from fastapi import HTTPException, Response
+from fastapi import HTTPException, Request, Response
 from sqlmodel import Session
 
 from app.core.security import create_access_token, hash_password, verify_password
@@ -23,6 +23,18 @@ class AccountService:
         role = self.role_repo.get_by_id(data.role_id)
         if not role:
             raise HTTPException(status_code=404, detail="Role not found")
+
+        existing_email = self.repo.get_by_email(data.email)
+        if existing_email:
+            raise HTTPException(
+                status_code=409, detail="Email sudah terdaftar"
+            )
+
+        existing_username = self.repo.get_by_username(data.username)
+        if existing_username:
+            raise HTTPException(
+                status_code=409, detail="Username sudah terdaftar"
+            )
 
         account = AccountModel(**data.model_dump())
         account.password = hash_password(data.password)
@@ -50,7 +62,7 @@ class AccountService:
 
         return self.repo.delete(db_item)
 
-    def login(self, data: account_schema.AccountLogin, response: Response):
+    def login(self, data: account_schema.AccountLogin, response: Response, request: Request | None = None):
         account = self.repo.get_by_username(data.username)
         if not account:
             raise HTTPException(status_code=404, detail="Account not found.")
@@ -71,6 +83,11 @@ class AccountService:
             samesite="none",
             secure=True,
         )
+
+        if request:
+            request.state.audit_account_id = account.id
+            request.state.audit_entity = "Account"
+            request.state.audit_entity_id = account.id
 
         return True
 
